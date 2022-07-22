@@ -14,40 +14,83 @@
 
 'use strict';
 
-const movieDB = {
-    movies: [
-        "Логан",
-        "Лига справедливости",
-        "Ла-ла лэнд",
-        "Одержимость",
-        "Скотт Пилигрим против..."
-    ]
-};
+document.addEventListener('DOMContentLoaded', () => {
+    const movieDB = {
+        movies: [
+            "Логан",
+            "Лига справедливости",
+            "Ла-ла лэнд",
+            "Одержимость",
+            "Скотт Пилигрим против..."
+        ]
+    };
+    
+    const avds = document.querySelectorAll('.promo__adv img'),
+        genre = document.querySelector('.promo__genre'),
+        bg = document.querySelector('.promo__bg'),
+        listMovie = document.querySelector('.promo__interactive-list'),
+        addForm = document.querySelector('form.add'),
+        addInput = addForm.querySelector('.adding__input'),
+        checkBox = addForm.querySelector('[type = "checkbox"]');
 
-const avds = document.querySelectorAll('.promo__adv img'),
-    genre = document.querySelector('.promo__genre'),
-    bg = document.querySelector('.promo__bg'),
-    listMovie = document.querySelector('.promo__interactive-list');
+    
 
-avds.forEach(avd => {
-    avd.remove();
-});
+    addForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const newMovie = addInput.value;
+        const favorite = checkBox.checked;
 
-genre.textContent = 'драма';
+        movieDB.movies.push(newMovie);
+        sortArr(movieDB.movies);
 
-bg.style.backgroundImage = 'url("img/bg.jpg")';
+        addNewMovie(movieDB.movies, listMovie);
+        event.target.reset();
+    });
 
-console.log(movieDB.movies.sort());
+    const deleteAvd = (arr) => {
+        arr.forEach(avd => {
+            avd.remove();
+        });
+    };
 
-listMovie.innerHTML = '';
+    deleteAvd(avds);
 
+    const makeChanges = () => {
+        genre.textContent = 'драма';
+    
+        bg.style.backgroundImage = 'url("img/bg.jpg")';
+    };
+    
+    makeChanges();
 
-movieDB.movies.forEach((movie, i) => {
+    const sortArr = (arr) => {
+        for (let i = 0; i < arr.length; i++) {
+            arr[i] = arr[i].toLowerCase();
+        }
+        arr.sort();
+    };
+    
+    sortArr(movieDB.movies);
+
+    function addNewMovie(list, parent) {
+        parent.innerHTML = '';
         
-    listMovie.innerHTML += `
-    <li class="promo__interactive-item">${i + 1} ${movieDB.movies[i]}
-        <div class="delete"></div>
-    </li>
-    `;
-} );
+        list.forEach((movie, i) => {
+            
+            parent.innerHTML += `
+            <li class="promo__interactive-item">${i + 1} ${addThreeDot(movie)}
+                <div class="delete"></div>
+            </li>
+            `;
+        } );
+    }
 
+    addNewMovie(movieDB.movies, listMovie);
+    
+    function addThreeDot (name) {
+        if (name.length > 20) {
+            return name.slice(0, 20) + '...';
+        }
+        return name;
+    } 
+});
