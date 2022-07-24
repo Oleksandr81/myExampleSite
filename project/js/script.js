@@ -32,16 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
         addForm = document.querySelector('form.add'),
         addInput = addForm.querySelector('.adding__input'),
         checkBox = addForm.querySelector('[type = "checkbox"]');
-
-    
+        
 
     addForm.addEventListener('submit', (event) => {
         event.preventDefault();
         const newMovie = addInput.value;
         const favorite = checkBox.checked;
 
+        if (favorite) {
+            console.log('Добавляємо улюблений фільм');
+        }
+
         movieDB.movies.push(newMovie);
-        sortArr(movieDB.movies);
 
         addNewMovie(movieDB.movies, listMovie);
         event.target.reset();
@@ -53,44 +55,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    deleteAvd(avds);
-
     const makeChanges = () => {
         genre.textContent = 'драма';
-    
         bg.style.backgroundImage = 'url("img/bg.jpg")';
     };
     
-    makeChanges();
-
     const sortArr = (arr) => {
         for (let i = 0; i < arr.length; i++) {
             arr[i] = arr[i].toLowerCase();
         }
         arr.sort();
     };
-    
-    sortArr(movieDB.movies);
 
     function addNewMovie(list, parent) {
         parent.innerHTML = '';
-        
+        sortArr(list);
+
         list.forEach((movie, i) => {
-            
             parent.innerHTML += `
             <li class="promo__interactive-item">${i + 1} ${addThreeDot(movie)}
                 <div class="delete"></div>
             </li>
             `;
         } );
+
+        document.querySelectorAll('.delete').forEach((btn, i) => {
+            btn.addEventListener('click', () => {
+                btn.parentElement.remove();
+                movieDB.movies.splice(i, 1);
+
+                addNewMovie(list, parent);
+            });
+        });
     }
 
-    addNewMovie(movieDB.movies, listMovie);
-    
     function addThreeDot (name) {
-        if (name.length > 20) {
-            return name.slice(0, 20) + '...';
+        if (name.length > 18) {
+            return name.slice(0, 18) + '...';
         }
         return name;
     } 
+
+    deleteAvd(avds);
+    makeChanges();
+    addNewMovie(movieDB.movies, listMovie);
+    
+    
 });
